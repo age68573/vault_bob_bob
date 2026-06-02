@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Northstar 客戶營運中心</title>
+    <style>
+        :root {
+            --navy: #10253f;
+            --navy-light: #17395e;
+            --blue: #1769aa;
+            --green: #138a62;
+            --orange: #e47924;
+            --red: #c54444;
+            --ink: #1d2a3a;
+            --muted: #68788b;
+            --line: #dce3eb;
+            --surface: #ffffff;
+            --background: #f3f6f9;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: var(--background);
+            font-family: Arial, "Noto Sans TC", sans-serif;
+            line-height: 1.5;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 68px;
+            padding: 0 32px;
+            color: #fff;
+            background: var(--navy);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: .3px;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: #fff;
+            color: var(--navy);
+            font-size: 14px;
+            place-items: center;
+        }
+
+        .operator {
+            color: #d5e2ef;
+            font-size: 13px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            min-height: calc(100vh - 68px);
+        }
+
+        aside {
+            padding: 22px 14px;
+            color: #dce8f4;
+            background: var(--navy-light);
+        }
+
+        .nav-label {
+            margin: 2px 12px 10px;
+            color: #91aac5;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        nav a {
+            display: block;
+            margin: 4px 0;
+            padding: 10px 12px;
+            border-radius: 6px;
+            color: #dce8f4;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        nav a.active, nav a:hover {
+            background: rgba(255, 255, 255, .12);
+            color: #fff;
+        }
+
+        main {
+            padding: 30px;
+        }
+
+        .page-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 22px;
+        }
+
+        h1, h2, p {
+            margin-top: 0;
+        }
+
+        h1 {
+            margin-bottom: 4px;
+            font-size: 25px;
+        }
+
+        h2 {
+            margin-bottom: 16px;
+            font-size: 17px;
+        }
+
+        .subtitle, .empty, .note {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .button {
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 5px;
+            color: #fff;
+            background: var(--blue);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            filter: brightness(.94);
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .card, .panel {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            box-shadow: 0 2px 4px rgba(21, 44, 68, .04);
+        }
+
+        .card {
+            padding: 18px;
+        }
+
+        .card-label {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+
+        .card-value {
+            margin-top: 7px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .card-detail {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 9px;
+            border-radius: 12px;
+            color: #fff;
+            background: var(--muted);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status.up {
+            background: var(--green);
+        }
+
+        .status.down {
+            background: var(--red);
+        }
+
+        .panel {
+            margin-bottom: 22px;
+            padding: 20px;
+        }
+
+        .panel-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            border-top: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--muted);
+            background: #f8fafc;
+            font-size: 11px;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+
+        code {
+            color: #37536e;
+            font-family: Consolas, monospace;
+            font-size: 12px;
+        }
+
+        dialog {
+            width: min(500px, calc(100vw - 40px));
+            padding: 0;
+            border: 0;
+            border-radius: 8px;
+            box-shadow: 0 18px 48px rgba(12, 35, 58, .25);
+        }
+
+        dialog::backdrop {
+            background: rgba(6, 21, 38, .5);
+        }
+
+        .modal-header, .modal-body, .modal-actions {
+            padding: 18px 22px;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--line);
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid var(--line);
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bfcbd8;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .secondary {
+            color: var(--ink);
+            background: #edf1f5;
+        }
+
+        .message {
+            min-height: 20px;
+            margin-top: 12px;
+            color: var(--red);
+            font-size: 13px;
+        }
+
+        .auth-panel, .alert {
+            margin-bottom: 22px;
+            padding: 16px 18px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+        }
+
+        .auth-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .auth-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            display: none;
+            font-size: 14px;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.success {
+            border-color: #a9ddca;
+            color: #096445;
+            background: #edfbf5;
+        }
+
+        .alert.warning {
+            border-color: #f0c797;
+            color: #925414;
+            background: #fff8ed;
+        }
+
+        .alert.error {
+            border-color: #e6aaaa;
+            color: #9f2929;
+            background: #fff1f1;
+        }
+
+        @media (max-width: 800px) {
+            .layout {
+                display: block;
+            }
+
+            aside {
+                display: none;
+            }
+
+            main {
+                padding: 20px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .table-scroll {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="brand">
+        <span class="brand-mark">NS</span>
+        <span>Northstar 客戶營運中心</span>
+    </div>
+    <div class="operator">營運管理員 ｜ 內部系統</div>
+</header>
+<div class="layout">
+    <aside>
+        <div class="nav-label">營運管理</div>
+        <nav>
+            <a class="active" href="#dashboard">營運總覽</a>
+            <a href="#customers">客戶管理</a>
+        </nav>
+    </aside>
+    <main>
+        <section class="page-heading">
+            <div>
+                <h1>營運總覽</h1>
+                <p class="subtitle">客戶服務平台營運狀態</p>
+            </div>
+            <button class="button" type="button" id="open-create">新增客戶</button>
+        </section>
+
+        <section class="auth-panel">
+            <div>
+                <strong>JWT 驗證展示</strong>
+                <div class="subtitle" id="auth-state">尚未登入。客戶資料 API 需要有效 JWT token。</div>
+            </div>
+            <div class="auth-actions">
+                <button class="button" type="button" id="open-login">登入取得 JWT</button>
+                <button class="button secondary" type="button" id="verify-token">驗證目前 JWT</button>
+                <button class="button secondary" type="button" id="clear-token">清除 JWT</button>
+            </div>
+        </section>
+
+        <div class="alert" id="page-alert"></div>
+
+        <section class="cards">
+            <article class="card">
+                <div class="card-label">平台狀態</div>
+                <div class="card-value"><span class="status" id="app-status">檢查中</span></div>
+                <div class="card-detail">JBoss EAP 應用服務</div>
+            </article>
+            <article class="card">
+                <div class="card-label">MongoDB 狀態</div>
+                <div class="card-value"><span class="status" id="mongodb-status">檢查中</span></div>
+                <div class="card-detail">客戶資料儲存服務</div>
+            </article>
+            <article class="card">
+                <div class="card-label">客戶筆數</div>
+                <div class="card-value" id="customer-count">-</div>
+                <div class="card-detail">目前顯示最近 20 筆資料</div>
+            </article>
+        </section>
+
+        <section class="panel" id="customers">
+            <div class="panel-heading">
+                <div>
+                    <h2>近期客戶</h2>
+                    <p class="subtitle">由 MongoDB 即時載入的客戶紀錄</p>
+                </div>
+                <button class="button secondary" type="button" id="reload-customers">重新整理</button>
+            </div>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>客戶編號</th>
+                        <th>姓名</th>
+                        <th>電子郵件</th>
+                        <th>建立時間</th>
+                    </tr>
+                    </thead>
+                    <tbody id="customer-rows">
+                    <tr><td class="empty" colspan="4">正在載入客戶資料...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<dialog id="create-dialog">
+    <form id="create-form">
+        <div class="modal-header">
+            <h2>新增客戶</h2>
+        </div>
+        <div class="modal-body">
+            <p class="note">建立後將直接寫入 MongoDB 的 <code>customers</code> collection。</p>
+            <label for="customer-name">客戶姓名</label>
+            <input id="customer-name" name="name" required autocomplete="name">
+            <label for="customer-email">電子郵件</label>
+            <input id="customer-email" name="email" type="email" required autocomplete="email">
+            <div class="message" id="form-message"></div>
+        </div>
+        <div class="modal-actions">
+            <button class="button secondary" type="button" id="cancel-create">取消</button>
+            <button class="button" type="submit">建立客戶</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="login-dialog">
+    <form id="login-form">
+        <div class="modal-header">
+            <h2>營運管理員登入</h2>
+        </div>
+        <div class="modal-body">
+            <p class="note">登入成功後，系統會簽發有效期限為 15 分鐘的 JWT。</p>
+            <label for="login-username">帳號</label>
+            <input id="login-username" name="username" value="operator" required autocomplete="username">
+            <label for="login-password">密碼</label>
+            <input id="login-password" name="password" type="password" required
+                   autocomplete="current-password">
+            <div class="message" id="login-message"></div>
+        </div>
+        <div class="modal-actions">
+            <button class="button secondary" type="button" id="cancel-login">取消</button>
+            <button class="button" type="submit">登入並取得 JWT</button>
+        </div>
+    </form>
+</dialog>
+
+<script>
+    const customerRows = document.getElementById("customer-rows");
+    const createDialog = document.getElementById("create-dialog");
+    const createForm = document.getElementById("create-form");
+    const formMessage = document.getElementById("form-message");
+    const loginDialog = document.getElementById("login-dialog");
+    const loginForm = document.getElementById("login-form");
+    const loginMessage = document.getElementById("login-message");
+    const pageAlert = document.getElementById("page-alert");
+    const tokenKey = "northstarCustomerCenterJwt";
+
+    function escapeHtml(value) {
+        const div = document.createElement("div");
+        div.textContent = value ?? "";
+        return div.innerHTML;
+    }
+
+    function showStatus(id, value) {
+        const element = document.getElementById(id);
+        element.textContent = value;
+        element.className = `status ${value === "UP" ? "up" : "down"}`;
+    }
+
+    async function readError(response, fallback) {
+        const text = await response.text();
+        if (!text) return fallback;
+        try {
+            return JSON.parse(text).error || fallback;
+        } catch (error) {
+            return `${fallback}：${text}`;
+        }
+    }
+
+    function token() {
+        return localStorage.getItem(tokenKey);
+    }
+
+    function authHeaders(extra = {}) {
+        const jwt = token();
+        return jwt ? {...extra, "Authorization": `Bearer ${jwt}`} : extra;
+    }
+
+    function notify(message, level = "success") {
+        pageAlert.textContent = message;
+        pageAlert.className = `alert show ${level}`;
+    }
+
+    async function verifyToken(showResult = true) {
+        const authState = document.getElementById("auth-state");
+        if (!token()) {
+            authState.textContent = "尚未登入。客戶資料 API 需要有效 JWT token。";
+            if (showResult) notify("目前沒有 JWT token，請先登入。", "warning");
+            return false;
+        }
+        try {
+            const response = await fetch("api/auth/profile", {headers: authHeaders()});
+            if (!response.ok) throw new Error(await readError(response, "JWT 驗證失敗"));
+            const profile = await response.json();
+            authState.textContent = `JWT 簽章有效：${profile.username} / ${profile.role}，到期時間 ${new Date(profile.expiresAt * 1000).toLocaleString()}`;
+            if (showResult) notify("JWT 簽章驗證成功。此 token 可呼叫受保護的客戶 API。");
+            return true;
+        } catch (error) {
+            authState.textContent = `JWT 無效：${error.message}`;
+            if (showResult) notify(error.message, "error");
+            return false;
+        }
+    }
+
+    async function loadHealth() {
+        try {
+            const response = await fetch("api/health");
+            const data = await response.json();
+            showStatus("app-status", data.status);
+            showStatus("mongodb-status", data.mongodb);
+        } catch (error) {
+            showStatus("app-status", "DOWN");
+            showStatus("mongodb-status", "DOWN");
+        }
+    }
+
+    async function loadCustomers() {
+        customerRows.innerHTML = '<tr><td class="empty" colspan="4">正在載入客戶資料...</td></tr>';
+        try {
+            const response = await fetch("api/customers?limit=20", {headers: authHeaders()});
+            if (!response.ok) throw new Error(await readError(response, "無法取得客戶資料"));
+            const customers = await response.json();
+            document.getElementById("customer-count").textContent = customers.length;
+            customerRows.innerHTML = customers.length === 0
+                ? '<tr><td class="empty" colspan="4">目前尚無客戶資料，請建立第一筆客戶。</td></tr>'
+                : customers.map(customer => `
+                    <tr>
+                        <td><code>${escapeHtml(customer.id)}</code></td>
+                        <td>${escapeHtml(customer.name)}</td>
+                        <td>${escapeHtml(customer.email)}</td>
+                        <td>${escapeHtml(customer.createdAt)}</td>
+                    </tr>`).join("");
+        } catch (error) {
+            document.getElementById("customer-count").textContent = "-";
+            customerRows.innerHTML = `<tr><td class="empty" colspan="4">${escapeHtml(error.message)}</td></tr>`;
+        }
+    }
+
+    document.getElementById("open-create").addEventListener("click", () => {
+        if (!token()) {
+            notify("請先登入取得 JWT，再建立客戶。", "warning");
+            return;
+        }
+        formMessage.textContent = "";
+        createDialog.showModal();
+    });
+
+    document.getElementById("open-login").addEventListener("click", () => {
+        loginMessage.textContent = "";
+        loginDialog.showModal();
+    });
+
+    document.getElementById("cancel-create").addEventListener("click", () => createDialog.close());
+    document.getElementById("cancel-login").addEventListener("click", () => loginDialog.close());
+    document.getElementById("reload-customers").addEventListener("click", loadCustomers);
+    document.getElementById("verify-token").addEventListener("click", () => verifyToken());
+    document.getElementById("clear-token").addEventListener("click", () => {
+        localStorage.removeItem(tokenKey);
+        verifyToken(false);
+        loadCustomers();
+        notify("JWT token 已從瀏覽器清除。再次查詢客戶資料將收到 401。", "warning");
+    });
+
+    loginForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        loginMessage.textContent = "";
+        const fields = new FormData(loginForm);
+        try {
+            const response = await fetch("api/auth/login", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({username: fields.get("username"), password: fields.get("password")})
+            });
+            if (!response.ok) throw new Error(await readError(response, "登入失敗"));
+            const result = await response.json();
+            localStorage.setItem(tokenKey, result.accessToken);
+            loginDialog.close();
+            await verifyToken(false);
+            await loadCustomers();
+            notify("登入成功。JWT 已儲存在瀏覽器，客戶 API 現在可以正常使用。");
+        } catch (error) {
+            loginMessage.textContent = error.message;
+        }
+    });
+
+    createForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        formMessage.textContent = "";
+        const fields = new FormData(createForm);
+        try {
+            const response = await fetch("api/customers", {
+                method: "POST",
+                headers: authHeaders({"Content-Type": "application/json"}),
+                body: JSON.stringify({name: fields.get("name"), email: fields.get("email")})
+            });
+            if (!response.ok) {
+                throw new Error(await readError(response, "建立客戶失敗"));
+            }
+            const result = await response.json();
+            createForm.reset();
+            createDialog.close();
+            await loadCustomers();
+            notify(result.notificationMessage, result.notificationSent ? "success" : "warning");
+        } catch (error) {
+            formMessage.textContent = error.message;
+        }
+    });
+
+    loadHealth();
+    verifyToken(false);
+    loadCustomers();
+</script>
+</body>
+</html>
