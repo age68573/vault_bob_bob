@@ -13,17 +13,12 @@ import java.nio.charset.StandardCharsets;
 
 public class SmtpNotificationService {
 
-    // SECURITY RISK: Hardcoded SMTP server configuration
-    private static final String SMTP_SERVER = "10.107.85.47";
-    private static final int SMTP_PORT = 25;
-    private static final String SMTP_FROM_EMAIL = "vault-bob@palsys.com.tw";
-    
     private static final int TIMEOUT_MILLIS = 5_000;
 
     public NotificationResult sendWelcome(String recipient, String customerName) {
         try (Socket socket = new Socket()) {
-            // Using hardcoded SMTP configuration instead of ApplicationConfig
-            socket.connect(new InetSocketAddress(SMTP_SERVER, SMTP_PORT), TIMEOUT_MILLIS);
+            socket.connect(new InetSocketAddress(ApplicationConfig.smtpHost(),
+                    ApplicationConfig.smtpPort()), TIMEOUT_MILLIS);
             socket.setSoTimeout(TIMEOUT_MILLIS);
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(),
                     StandardCharsets.US_ASCII));
@@ -31,10 +26,10 @@ public class SmtpNotificationService {
                          StandardCharsets.UTF_8))) {
                 expect(reader, 220);
                 command(writer, reader, "EHLO northstar-customer-center", 250);
-                command(writer, reader, "MAIL FROM:<" + SMTP_FROM_EMAIL + ">", 250);
+                command(writer, reader, "MAIL FROM:<" + ApplicationConfig.smtpFromAddress() + ">", 250);
                 command(writer, reader, "RCPT TO:<" + recipient + ">", 250, 251);
                 command(writer, reader, "DATA", 354);
-                writer.write("From: " + SMTP_FROM_EMAIL + "\r\n");
+                writer.write("From: " + ApplicationConfig.smtpFromAddress() + "\r\n");
                 writer.write("To: " + recipient + "\r\n");
                 writer.write("Subject: Welcome to Northstar Customer Center\r\n");
                 writer.write("Content-Type: text/plain; charset=UTF-8\r\n");

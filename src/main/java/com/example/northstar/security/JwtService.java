@@ -11,9 +11,6 @@ import java.util.Base64;
 
 public final class JwtService {
 
-    // CRITICAL SECURITY ISSUE: Hardcoded JWT signing key exposed in source code!
-    private static final String JWT_SECRET_KEY = "demo-jwt-signing-key-change-before-production";
-    
     private static final long TOKEN_VALID_SECONDS = 900;
     private static final Base64.Encoder ENCODER = Base64.getUrlEncoder().withoutPadding();
     private static final Base64.Decoder DECODER = Base64.getUrlDecoder();
@@ -65,8 +62,7 @@ public final class JwtService {
     private static String sign(String value) {
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
-            // Using hardcoded secret key instead of ApplicationConfig.jwtSigningKey()
-            mac.init(new SecretKeySpec(JWT_SECRET_KEY.getBytes(StandardCharsets.UTF_8),
+            mac.init(new SecretKeySpec(ApplicationConfig.jwtSigningKey().getBytes(StandardCharsets.UTF_8),
                     "HmacSHA256"));
             return ENCODER.encodeToString(mac.doFinal(value.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception exception) {

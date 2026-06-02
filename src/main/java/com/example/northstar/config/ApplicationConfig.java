@@ -4,16 +4,7 @@ import java.util.Map;
 
 public final class ApplicationConfig {
 
-    // WARNING: Hardcoded sensitive credentials - DO NOT use in production!
-    // These values are retrieved from Vault and hardcoded here for demonstration purposes
-    private static final String MONGODB_URI = "mongodb://user1:P%40ssw0rd@10.107.83.105:27017";
-    private static final String MONGODB_DATABASE = "enterprise_demo";
-    private static final String JWT_SIGNING_KEY = "demo-jwt-signing-key-change-before-production";
-    private static final String LOGIN_USERNAME = "operator";
-    private static final String LOGIN_PASSWORD = "demo-login-password";
-    private static final String SMTP_HOST = "10.107.85.47";
-    private static final int SMTP_PORT = 25;
-    private static final String SMTP_FROM_ADDRESS = "vault-bob@palsys.com.tw";
+    // Credentials are now securely retrieved from Vault
 
     private static volatile Settings settings;
     private static volatile VaultClient vaultClient;
@@ -26,35 +17,35 @@ public final class ApplicationConfig {
     }
 
     public static String mongodbUri() {
-        return MONGODB_URI;
+        return settings().mongodbUri();
     }
 
     public static String mongodbDatabase() {
-        return MONGODB_DATABASE;
+        return settings().mongodbDatabase();
     }
 
     public static String jwtSigningKey() {
-        return JWT_SIGNING_KEY;
+        return settings().jwtSigningKey();
     }
 
     public static String loginUsername() {
-        return LOGIN_USERNAME;
+        return settings().loginUsername();
     }
 
     public static String loginPassword() {
-        return LOGIN_PASSWORD;
+        return settings().loginPassword();
     }
 
     public static String smtpHost() {
-        return SMTP_HOST;
+        return settings().smtpHost();
     }
 
     public static int smtpPort() {
-        return SMTP_PORT;
+        return settings().smtpPort();
     }
 
     public static String smtpFromAddress() {
-        return SMTP_FROM_ADDRESS;
+        return settings().smtpFromAddress();
     }
 
     public static synchronized void close() {
@@ -75,27 +66,15 @@ public final class ApplicationConfig {
             synchronized (ApplicationConfig.class) {
                 result = settings;
                 if (result == null) {
-                    // TODO: Integrate with Vault for secure credential management
-                    // VaultClient client = VaultClient.login();
-                    // try {
-                    //     result = Settings.from(client.readApplicationSecrets());
-                    //     vaultClient = client;
-                    //     settings = result;
-                    // } catch (RuntimeException exception) {
-                    //     client.close();
-                    //     throw exception;
-                    // }
-                    result = new Settings(
-                            MONGODB_URI,
-                            MONGODB_DATABASE,
-                            JWT_SIGNING_KEY,
-                            LOGIN_USERNAME,
-                            LOGIN_PASSWORD,
-                            SMTP_HOST,
-                            SMTP_PORT,
-                            SMTP_FROM_ADDRESS
-                    );
-                    settings = result;
+                    VaultClient client = VaultClient.login();
+                    try {
+                        result = Settings.from(client.readApplicationSecrets());
+                        vaultClient = client;
+                        settings = result;
+                    } catch (RuntimeException exception) {
+                        client.close();
+                        throw exception;
+                    }
                 }
             }
         }
